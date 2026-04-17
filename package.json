@@ -1,0 +1,124 @@
+{
+  "name": "local-ports",
+  "displayName": "Local Ports",
+  "description": "Browse and manage local listening ports, grouped by process",
+  "version": "0.1.0",
+  "publisher": "stamina",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panrafal/vscode-local-ports"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "ports",
+    "lsof",
+    "node",
+    "localhost",
+    "dev servers"
+  ],
+  "activationEvents": [
+    "onView:localPorts.view"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "localPorts.view",
+          "name": "Local Ports"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "localPorts.view",
+        "contents": "No local node servers detected.\n[Refresh](command:localPorts.refresh)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "localPorts.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "localPorts.kill",
+        "title": "Kill Process",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "localPorts.openSimpleBrowser",
+        "title": "Open in Editor Browser",
+        "icon": "$(browser)"
+      },
+      {
+        "command": "localPorts.openExternal",
+        "title": "Open in System Browser",
+        "icon": "$(link-external)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "localPorts.refresh",
+          "when": "view == localPorts.view",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "localPorts.kill",
+          "when": "view == localPorts.view && viewItem == port",
+          "group": "inline@1"
+        },
+        {
+          "command": "localPorts.openSimpleBrowser",
+          "when": "view == localPorts.view && viewItem == port",
+          "group": "inline@2"
+        },
+        {
+          "command": "localPorts.openExternal",
+          "when": "view == localPorts.view && viewItem == port",
+          "group": "inline@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "localPorts.kill",
+          "when": "false"
+        },
+        {
+          "command": "localPorts.openSimpleBrowser",
+          "when": "false"
+        },
+        {
+          "command": "localPorts.openExternal",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "vscode:prepublish": "pnpm package",
+    "vsce:package": "vsce package --no-dependencies --out dist/",
+    "vsce:publish": "vsce publish --no-dependencies",
+    "release": "GITHUB_TOKEN=$(gh auth token) release-it"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.2",
+    "esbuild": "^0.19.0",
+    "release-it": "^17.10.0",
+    "typescript": "^5.3.0"
+  }
+}

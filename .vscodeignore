@@ -1,0 +1,15 @@
+.vscode/**
+.github/**
+.claude/**
+src/**
+out/**
+node_modules/**
+tsconfig.json
+esbuild.js
+**/*.map
+**/*.vsix
+.gitignore
+.env
+.env.*
+.release-it.json
+pnpm-lock.yaml
