@@ -22,13 +22,31 @@
     "localhost",
     "dev servers"
   ],
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "vscode:prepublish": "pnpm package",
+    "vsce:package": "vsce package --no-dependencies --out dist/",
+    "vsce:publish": "vsce publish --no-dependencies",
+    "release": "GITHUB_TOKEN=$(gh auth token) release-it"
+  },
   "activationEvents": [
     "onView:localPorts.view"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "localPorts",
+          "title": "Local Ports",
+          "icon": "icons/activity-bar.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "localPorts": [
         {
           "id": "localPorts.view",
           "name": "Local Ports"
@@ -103,15 +121,6 @@
         }
       ]
     }
-  },
-  "scripts": {
-    "compile": "node esbuild.js",
-    "watch": "node esbuild.js --watch",
-    "package": "node esbuild.js --production",
-    "vscode:prepublish": "pnpm package",
-    "vsce:package": "vsce package --no-dependencies --out dist/",
-    "vsce:publish": "vsce publish --no-dependencies",
-    "release": "GITHUB_TOKEN=$(gh auth token) release-it"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

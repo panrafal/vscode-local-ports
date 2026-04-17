@@ -16,6 +16,23 @@ A VS Code Explorer view that lists local TCP listeners, grouped by process name.
 
 Runs `lsof -iTCP -sTCP:LISTEN -n -P -c node -F pcn` and parses the machine-readable output. No sudo required for processes owned by the current user.
 
+## Installation
+
+The extension is not published on the VS Code Marketplace. Install the latest `.vsix` from the [GitHub Releases page](https://github.com/panrafal/vscode-local-ports/releases):
+
+1. Download `vscode-local-ports-<version>.vsix` from the [latest release](https://github.com/panrafal/vscode-local-ports/releases/latest).
+2. Install it using either method below.
+
+**From the Extensions view:**
+
+Open the Extensions view (`Cmd+Shift+X` / `Ctrl+Shift+X`), click the `...` menu, choose **Install from VSIX...**, and select the downloaded file.
+
+**From the command line:**
+
+```sh
+code --install-extension vscode-local-ports-<version>.vsix
+```
+
 ## Development
 
 ```bash

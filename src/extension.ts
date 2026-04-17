@@ -12,13 +12,46 @@ export function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(treeView);
 
+  let pollTimer: NodeJS.Timeout | undefined;
+  let pollInFlight = false;
+  const startPolling = () => {
+    if (pollTimer) {
+      return;
+    }
+    pollTimer = setInterval(async () => {
+      if (pollInFlight) {
+        return;
+      }
+      pollInFlight = true;
+      try {
+        await provider.refresh();
+      } finally {
+        pollInFlight = false;
+      }
+    }, 5000);
+  };
+  const stopPolling = () => {
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = undefined;
+    }
+  };
+
   context.subscriptions.push(
     treeView.onDidChangeVisibility((e) => {
       if (e.visible) {
         void provider.refresh();
+        startPolling();
+      } else {
+        stopPolling();
       }
-    })
+    }),
+    { dispose: stopPolling }
   );
+
+  if (treeView.visible) {
+    startPolling();
+  }
 
   context.subscriptions.push(
     vscode.commands.registerCommand("localPorts.refresh", () =>

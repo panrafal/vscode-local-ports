@@ -1,5 +1,11 @@
 import { execFile } from "child_process";
 import { promisify } from "util";
+import {
+  ProcessInfo,
+  loadProcessTable,
+  resolveGroupLeader,
+  resolveParentChain,
+} from "./processTable";
 
 const execFileAsync = promisify(execFile);
 
@@ -10,6 +16,10 @@ export interface ListeningPort {
   port: number;
   /** Raw `n` field from lsof, kept for tooltip/debug. */
   rawName: string;
+  /** Immediate parent first, up to init. Empty if ps failed. */
+  parents: ProcessInfo[];
+  /** Process-group leader when this pid is not itself the leader. */
+  groupLeader: ProcessInfo | null;
 }
 
 export class LsofError extends Error {}
@@ -35,7 +45,24 @@ export async function scanNodePorts(): Promise<ListeningPort[]> {
       throw new LsofError(e.stderr?.trim() || e.message || "lsof failed");
     }
   }
-  return parseLsofF(stdout);
+  const ports = parseLsofF(stdout);
+  if (ports.length === 0) {
+    return ports;
+  }
+
+  let table: Map<number, ProcessInfo> | null = null;
+  try {
+    table = await loadProcessTable();
+  } catch {
+    // Non-fatal: tooltips just won't show the parent chain.
+  }
+  if (table) {
+    for (const port of ports) {
+      port.parents = resolveParentChain(port.pid, table);
+      port.groupLeader = resolveGroupLeader(port.pid, table);
+    }
+  }
+  return ports;
 }
 
 /**
@@ -76,6 +103,8 @@ export function parseLsofF(output: string): ListeningPort[] {
             host: parsed.host,
             port: parsed.port,
             rawName: value,
+            parents: [],
+            groupLeader: null,
           });
         }
         break;
