@@ -2,6 +2,8 @@
 
 A VS Code Explorer view that lists local TCP listeners, grouped by process name.
 
+![alt text](<CleanShot 2026-04-17 at 12.27.29@2x.png>)
+
 ## Features
 
 - Lists listening ports from `node` processes (more process kinds to follow).
