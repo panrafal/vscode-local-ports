@@ -2,7 +2,7 @@
   "name": "local-ports",
   "displayName": "Local Ports",
   "description": "Browse and manage local listening ports, grouped by process",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "stamina",
   "license": "MIT",
   "repository": {
